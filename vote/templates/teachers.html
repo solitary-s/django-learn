@@ -61,14 +61,32 @@
                 </div>
                 <div class="intro">{{ teacher.intro }}</div>
                 <div class="comment">
-                    <a href="">好评</a>&nbsp;(<strong>{{ teacher.good_count }}</strong>)
+                    <a href="/praise/?tno={{ teacher.no }}">好评</a>&nbsp;&nbsp;
+                    (<strong>{{ teacher.good_count }}</strong>)
                     &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="">差评</a>&nbsp;<strong>{{ teacher.bad_count }}</strong>)
+                    <a href="/criticize/?tno={{ teacher.no }}">差评</a>&nbsp;&nbsp;
+                    (<strong>{{ teacher.bad_count }}</strong>)
                 </div>
             </div>
         </div>
         {% endfor %}
         <a href="/">返回首页</a>
     </div>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        $(() => {
+            $('.comment>a').on('click', (evt) => {
+                evt.preventDefault()
+                let url = $(evt.target).attr('href')
+                $.getJSON(url, (json) => {
+                    if (json.code == 200) {
+                        $(evt.target).next().text(json.count)
+                    } else {
+                        alert(json.msg)
+                    }
+                })
+            })
+        })
+    </script>
 </body>
 </html>

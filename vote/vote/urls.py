@@ -17,8 +17,12 @@ from django.contrib import admin
 from django.urls import path
 from polls.views import show_subjects, show_teachers
 
+from vote import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', show_subjects),
     path('teachers/', show_teachers),
+    path('praise/', views.praise_or_criticize),
+    path('criticize/', views.praise_or_criticize),
 ]
