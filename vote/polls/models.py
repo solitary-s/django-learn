@@ -8,7 +8,7 @@
 from django.db import models
 
 
-class TbSubject(models.Model):
+class Subject(models.Model):
     no = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     intro = models.CharField(max_length=1000)
@@ -19,7 +19,7 @@ class TbSubject(models.Model):
         db_table = 'tb_subject'
 
 
-class TbTeacher(models.Model):
+class Teacher(models.Model):
     no = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
     sex = models.IntegerField()
@@ -28,7 +28,7 @@ class TbTeacher(models.Model):
     photo = models.CharField(max_length=255)
     good_count = models.IntegerField()
     bad_count = models.IntegerField()
-    sno = models.ForeignKey(TbSubject, models.DO_NOTHING, db_column='sno')
+    subject = models.ForeignKey(Subject, models.DO_NOTHING, db_column='sno')
 
     class Meta:
         managed = False
