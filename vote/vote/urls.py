@@ -14,10 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from polls.views import show_subjects, show_teachers, login, get_captcha, logout
+from django.urls import path, include
+from polls.views import show_subjects, show_teachers, login, get_captcha, logout, display_subjects
 
 from vote import views
+from vote import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +28,10 @@ urlpatterns = [
     path('criticize/', views.praise_or_criticize),
     path('login/', login),
     path('captcha/', get_captcha),
-    path('logout/', logout)
+    path('logout/', logout),
+    path('subject/', display_subjects)
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns.insert(0, path('__debug__/', include(debug_toolbar.urls)))

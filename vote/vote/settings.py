@@ -38,8 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'polls'
+    'debug_toolbar',
+    'polls',
+    'rest_framework'
 ]
+
+REST_FRAMEWORK = {
+
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'vote.middlewares.check_login_middleware'
 ]
 
 ROOT_URLCONF = 'vote.urls'
@@ -115,9 +123,109 @@ USE_L10N = True
 
 USE_TZ = True
 
+CACHES = {
+    'default': {
+        # 指定通过django-redis接入Redis服务
+        'BACKEND': 'django_redis.cache.RedisCache',
+        # Redis服务器的URL
+        'LOCATION': ['redis://192.168.0.1:6379', ],
+        # Redis中键的前缀（解决命名冲突）
+        'KEY_PREFIX': 'vote',
+        # 其他的配置选项
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            # 连接池（预置若干备用的Redis连接）参数
+            'CONNECTION_POOL_KWARGS': {
+                # 最大连接数
+                'max_connections': 512,
+            },
+            # 连接Redis的用户口令
+            'PASSWORD': '123456',
+        }
+    },
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 STATIC_URL = '/static/'
+
+# 配置会话的超时时间为1天（86400秒）
+SESSION_COOKIE_AGE = 86400
+
+# 设置为True在关闭浏览器窗口时session就过期
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+DEBUG_TOOLBAR_CONFIG = {
+    # 引入jQuery库
+    'JQUERY_URL': 'https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js',
+    # 工具栏是否折叠
+    'SHOW_COLLAPSED': True,
+    # 是否显示工具栏
+    'SHOW_TOOLBAR_CALLBACK': lambda x: True,
+}
+
+# LOGGING = {
+#     'version': 1,
+#     # 是否禁用已经存在的日志器
+#     'disable_existing_loggers': False,
+#     # 日志格式化器
+#     'formatters': {
+#         'simple': {
+#             'format': '%(asctime)s %(module)s.%(funcName)s: %(message)s',
+#             'datefmt': '%Y-%m-%d %H:%M:%S',
+#         },
+#         'verbose': {
+#             'format': '%(asctime)s %(levelname)s [%(process)d-%(threadName)s] '
+#                       '%(module)s.%(funcName)s line %(lineno)d: %(message)s',
+#             'datefmt': '%Y-%m-%d %H:%M:%S',
+#         }
+#     },
+#     # 日志过滤器
+#     'filters': {
+#         # 只有在Django配置文件中DEBUG值为True时才起作用
+#         'require_debug_true': {
+#             '()': 'django.utils.log.RequireDebugTrue',
+#         },
+#     },
+#     # 日志处理器
+#     'handlers': {
+#         # 输出到控制台
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#             'level': 'DEBUG',
+#             'filters': ['require_debug_true'],
+#             'formatter': 'simple',
+#         },
+#         # 输出到文件(每周切割一次)
+#         'file1': {
+#             'class': 'logging.handlers.TimedRotatingFileHandler',
+#             'filename': 'access.log',
+#             'when': 'W0',
+#             'backupCount': 12,
+#             'formatter': 'simple',
+#             'level': 'INFO',
+#         },
+#         # 输出到文件(每天切割一次)
+#         'file2': {
+#             'class': 'logging.handlers.TimedRotatingFileHandler',
+#             'filename': 'error.log',
+#             'when': 'D',
+#             'backupCount': 31,
+#             'formatter': 'verbose',
+#             'level': 'WARNING',
+#         },
+#     },
+#     # 日志器记录器
+#     'loggers': {
+#         'django': {
+#             # 需要使用的日志处理器
+#             'handlers': ['console', 'file1', 'file2'],
+#             # 是否向上传播日志信息
+#             'propagate': True,
+#             # 日志级别(不一定是最终的日志级别)
+#             'level': 'DEBUG',
+#         },
+#     }
+# }
